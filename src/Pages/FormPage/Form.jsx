@@ -66,7 +66,6 @@ export default function FormComponent() {
     onSubmit: (values, { setSubmitting }) => {
       console.log(values);
       setSubmitting(false);
-      // navigate('/complete')
 
       axios.post('https://admin.cpvarabia.com/ZATCA/AddZATCA.php',values)
       .then(response => 
