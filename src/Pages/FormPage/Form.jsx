@@ -66,10 +66,12 @@ export default function FormComponent() {
     onSubmit: (values, { setSubmitting }) => {
       console.log(values);
       setSubmitting(false);
-      navigate('/complete')
+      // navigate('/complete')
 
-      axios.post('https://admin.cpvarabia.com/ZATCA/show_ZATCA_all.php',values)
-      .then(response => console.log(response))
+      axios.post('https://admin.cpvarabia.com/ZATCA/AddZATCA.php',values)
+      .then(response => 
+        navigate('/complete')
+        )
       .catch(error => console.log(error))
 
     }
