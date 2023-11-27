@@ -3,9 +3,11 @@ import * as Yup from 'yup';
 import { Formik, useFormik } from 'formik';
 import axios from 'axios';
 import { Button, Input, Spinner } from 'reactstrap';
+import { useNavigate } from 'react-router-dom';
 
 export default function FormComponent() {
   const [formData, setFormData] = useState([]);
+  const navigate = useNavigate()
 
   useEffect(() => {
     async function fetchData() {
@@ -64,6 +66,7 @@ export default function FormComponent() {
     onSubmit: (values, { setSubmitting }) => {
       console.log(values);
       setSubmitting(false);
+      navigate('/complete')
 
       axios.post('https://admin.cpvarabia.com/ZATCA/show_ZATCA_all.php',values)
       .then(response => console.log(response))

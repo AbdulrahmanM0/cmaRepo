@@ -2,7 +2,7 @@ import React from 'react'
 import FormComponent from './Form'
 import { Container } from 'reactstrap'
 
-export default function index() {
+export default function Index() {
   return (
     <div className='form-page'>
         <Container>
