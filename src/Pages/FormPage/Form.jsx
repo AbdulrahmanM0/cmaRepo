@@ -4,7 +4,6 @@ import { Formik, useFormik } from 'formik';
 import axios from 'axios';
 import { Button, Input, Spinner } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
-import Select from 'react-select';
 
 export default function FormComponent() {
   const [formData, setFormData] = useState([]);
