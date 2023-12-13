@@ -4,6 +4,7 @@ import { Formik, useFormik } from 'formik';
 import axios from 'axios';
 import { Button, Input, Spinner } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
+import Select from 'react-select';
 
 export default function FormComponent() {
   const [formData, setFormData] = useState([]);
@@ -32,6 +33,9 @@ export default function FormComponent() {
     formData.forEach((question) => {
       const { Input, Required, Type, min, max } = question;
       switch (Type) {
+        case 'dropdown':
+          schema[Input] = Required ? Yup.string().required('*Required') : Yup.string();
+          break;
         case 'text':
           schema[Input] = Required ? Yup.string().required('*Required') : Yup.string();
           break;
@@ -64,7 +68,6 @@ export default function FormComponent() {
     initialValues,
     validationSchema: Yup.object().shape(validateYupSchema()),
     onSubmit: (values, { setSubmitting }) => {
-      console.log(values);
       setSubmitting(false);
 
       axios.post('https://admin.cpvarabia.com/ZATCA/AddZATCA.php',values)
@@ -72,7 +75,6 @@ export default function FormComponent() {
         navigate('/complete')
         )
       .catch(error => console.log(error))
-
     }
   });
 
@@ -98,6 +100,24 @@ export default function FormComponent() {
                     <span className='form-text text-danger font-size-11'>{errors[questionName]}</span>
                   )}
                 </label>
+                { question.Type === "dropdown" ? 
+                <Input 
+                  type='select'
+                  className='custom-number-input Q-input font-size-12'
+                  onChange={(event) => {handleChange(event)}}
+                  value={values[questionName]}
+                  name={questionName}
+                >
+                  <option value={''}>
+                    {question.placeholder ? question.placeholder : 'Select State - إختر محافظة' }
+                  </option>
+                  {question.item.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.name}
+                    </option>
+                  ))}
+                </Input>
+                :
                 <Input
                   className='custom-number-input Q-input font-size-12'
                   type={question.Type}
@@ -106,6 +126,7 @@ export default function FormComponent() {
                   onChange={handleChange}
                   value={values[questionName] || ''}
                 />
+                }
               </div>
             );
           })}
