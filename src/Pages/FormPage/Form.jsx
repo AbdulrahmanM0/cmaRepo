@@ -5,27 +5,9 @@ import axios from 'axios';
 import { Button, Input, Spinner } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
 
-export default function FormComponent() {
-  const [formData, setFormData] = useState([]);
+export default function FormComponent({token ,formData , ProjectID , setErrorMSG}) {
   const navigate = useNavigate()
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await axios.get('https://admin.cpvarabia.com/ZATCA/show_ZATCA_all.php');
-        const data = response.data;
-        setFormData(
-          Object.keys(data)
-            .filter((key) => key !== 'error')
-            .map((key) => data[key])
-            .sort((a, b) => a.QuestionOrder - b.QuestionOrder)
-        );
-      } catch (error) {
-        console.log('ERROR:', error);
-      }
-    }
-    fetchData();
-  }, []);
 
   function validateYupSchema() {
     let schema = {};
@@ -42,6 +24,9 @@ export default function FormComponent() {
           schema[Input] = Required
             ? Yup.number().typeError('Must be a number').min(min, `Min ${min}`).max(max, `Max ${max}`).required('*Required')
             : Yup.number().typeError('Must be a number').min(min, `Min ${min}`).max(max, `Max ${max}`);
+          break;
+        case 'email':
+          schema[Input] = Required ? Yup.string().email('*Invalid email format').required('*Required') : Yup.string().email('*Invalid email format');
           break;
         default:
           break;
@@ -68,12 +53,16 @@ export default function FormComponent() {
     validationSchema: Yup.object().shape(validateYupSchema()),
     onSubmit: (values, { setSubmitting }) => {
       setSubmitting(false);
-
-      axios.post('https://admin.cpvarabia.com/ZATCA/AddZATCA.php',values)
-      .then(response => 
+      axios.post('https://admin.cpvarabia.com/ZATCA/AddZATCA.php',{ZATCAID:1,Token:token,ProjectID:ProjectID,...values})
+      .then(response => {
+        const data = response.data;
+        if(data.error){
+          setErrorMSG(true)
+        }else{
         navigate('/complete')
-        )
-      .catch(error => console.log(error))
+        }
+      })
+      .catch(error => {console.log(error); setErrorMSG(true)})
     }
   });
 
